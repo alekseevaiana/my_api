@@ -6,21 +6,20 @@
 
 /* eslint-disable */
 import React from "react";
-import {
-  getOverrideProps,
-  useAuthSignOutAction,
-} from "@aws-amplify/ui-react/internal";
-import { Button, View } from "@aws-amplify/ui-react";
+import { getOverrideProps } from "@aws-amplify/ui-react/internal";
+import { Button, Flex } from "@aws-amplify/ui-react";
 export default function Nav(props) {
   const { overrides, ...rest } = props;
-  const buttonOnClick = useAuthSignOutAction({ global: false });
   return (
-    <View
-      width="487px"
-      height="94px"
+    <Flex
+      gap="10px"
+      direction="row"
+      width="323px"
+      justifyContent="flex-end"
+      alignItems="center"
       position="relative"
       boxShadow="2px 0px 14px rgba(0, 0, 0, 0.25)"
-      padding="0px 0px 0px 0px"
+      padding="27px 26px 27px 26px"
       backgroundColor="rgba(250,250,250,1)"
       {...rest}
       {...getOverrideProps(overrides, "Nav")}
@@ -28,24 +27,20 @@ export default function Nav(props) {
       <Button
         display="flex"
         gap="10px"
-        position="absolute"
-        top="28.72%"
-        bottom="28.72%"
-        left="74.13%"
-        right="5.34%"
         direction="row"
+        width="fit-content"
         justifyContent="center"
         alignItems="center"
+        shrink="0"
+        height="40px"
+        position="relative"
         padding="8px 16px 8px 16px"
         size="default"
         isDisabled={false}
         variation="link"
         children="Sign Out"
-        onClick={() => {
-          buttonOnClick();
-        }}
         {...getOverrideProps(overrides, "Button")}
       ></Button>
-    </View>
+    </Flex>
   );
 }
