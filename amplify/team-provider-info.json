@@ -10,6 +10,11 @@
       "StackName": "amplify-myapi-staging-182809",
       "StackId": "arn:aws:cloudformation:us-west-1:858584556951:stack/amplify-myapi-staging-182809/d20be260-aec4-11ec-b831-024df04e6493",
       "AmplifyAppId": "d1e77a5mh3gbbs"
+    },
+    "categories": {
+      "auth": {
+        "myapi": {}
+      }
     }
   }
 }
