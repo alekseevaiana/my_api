@@ -14,7 +14,6 @@ export default function IngridientItem(props) {
     <View
       width="364px"
       height="96px"
-      overflow="hidden"
       position="relative"
       border="1px SOLID rgba(4,125,149,1)"
       borderRadius="10px"
@@ -39,8 +38,8 @@ export default function IngridientItem(props) {
         padding="0px 0px 0px 0px"
         whiteSpace="pre-wrap"
         name={ingredient?.name}
-        children="Apple"
-        {...getOverrideProps(overrides, "Apple")}
+        children="Ingredient"
+        {...getOverrideProps(overrides, "Ingredient")}
       ></Text>
       <Text
         fontFamily="Inter"
@@ -58,8 +57,8 @@ export default function IngridientItem(props) {
         padding="0px 0px 0px 0px"
         whiteSpace="pre-wrap"
         type={ingredient?.type}
-        children="Fruits"
-        {...getOverrideProps(overrides, "Fruits")}
+        children="Type"
+        {...getOverrideProps(overrides, "Type")}
       ></Text>
       <Icon
         width="30px"

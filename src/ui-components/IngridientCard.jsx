@@ -41,7 +41,7 @@ export default function IngridientCard(props) {
         isDisabled={false}
         variation="default"
         children="Delete"
-        {...getOverrideProps(overrides, "Buttonfiw")}
+        {...getOverrideProps(overrides, "Buttonjmi")}
       ></Button>
       <Button
         display="flex"
@@ -60,7 +60,7 @@ export default function IngridientCard(props) {
         isDisabled={false}
         variation="primary"
         children="Edit"
-        {...getOverrideProps(overrides, "Buttonhal")}
+        {...getOverrideProps(overrides, "Buttonudq")}
       ></Button>
       <Text
         fontFamily="Inter"
@@ -74,11 +74,11 @@ export default function IngridientCard(props) {
         justifyContent="flex-start"
         position="absolute"
         top="92.72px"
-        left="145px"
+        left="120px"
         padding="0px 0px 0px 0px"
         whiteSpace="pre-wrap"
-        children="Apple"
-        {...getOverrideProps(overrides, "Apple")}
+        children="Ingredient"
+        {...getOverrideProps(overrides, "Ingredient")}
       ></Text>
       <SelectField
         display="flex"

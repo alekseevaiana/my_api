@@ -46,7 +46,7 @@ export default function IngridientEditCard(props) {
         isDisabled={false}
         variation="default"
         children="Delete"
-        {...getOverrideProps(overrides, "Buttonhza")}
+        {...getOverrideProps(overrides, "Buttonvwi")}
       ></Button>
       <Button
         display="flex"
@@ -65,7 +65,7 @@ export default function IngridientEditCard(props) {
         isDisabled={false}
         variation="primary"
         children="Save"
-        {...getOverrideProps(overrides, "Buttoneyw")}
+        {...getOverrideProps(overrides, "Buttonxim")}
       ></Button>
       <Text
         fontFamily="Inter"
@@ -79,7 +79,7 @@ export default function IngridientEditCard(props) {
         justifyContent="flex-start"
         position="absolute"
         top="92.72px"
-        left="145px"
+        left="158px"
         padding="0px 0px 0px 0px"
         whiteSpace="pre-wrap"
         children="Edit"
