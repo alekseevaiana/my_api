@@ -7,15 +7,15 @@
 /* eslint-disable */
 import React from "react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
-import { Button, Flex } from "@aws-amplify/ui-react";
+import { Button, Flex, Text } from "@aws-amplify/ui-react";
 export default function Nav(props) {
   const { overrides, ...rest } = props;
   return (
     <Flex
       gap="10px"
       direction="row"
-      width="323px"
-      justifyContent="flex-end"
+      width="233px"
+      justifyContent="space-between"
       alignItems="center"
       position="relative"
       boxShadow="2px 0px 14px rgba(0, 0, 0, 0.25)"
@@ -24,6 +24,25 @@ export default function Nav(props) {
       {...rest}
       {...getOverrideProps(overrides, "Nav")}
     >
+      <Text
+        fontFamily="Inter"
+        fontSize="16px"
+        fontWeight="700"
+        color="rgba(2,78,94,1)"
+        lineHeight="24px"
+        textAlign="center"
+        display="flex"
+        direction="column"
+        justifyContent="center"
+        width="55px"
+        height="40px"
+        shrink="0"
+        position="relative"
+        padding="0px 0px 0px 0px"
+        whiteSpace="pre-wrap"
+        children="My API"
+        {...getOverrideProps(overrides, "My API")}
+      ></Text>
       <Button
         display="flex"
         gap="10px"

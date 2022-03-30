@@ -9,7 +9,7 @@ import React from "react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
 import { Icon, Text, View } from "@aws-amplify/ui-react";
 export default function IngridientItem(props) {
-  const { overrides, ...rest } = props;
+  const { ingredient, overrides, ...rest } = props;
   return (
     <View
       width="364px"
@@ -38,6 +38,7 @@ export default function IngridientItem(props) {
         left="17px"
         padding="0px 0px 0px 0px"
         whiteSpace="pre-wrap"
+        name={ingredient?.name}
         children="Apple"
         {...getOverrideProps(overrides, "Apple")}
       ></Text>
@@ -56,6 +57,7 @@ export default function IngridientItem(props) {
         left="167.5px"
         padding="0px 0px 0px 0px"
         whiteSpace="pre-wrap"
+        type={ingredient?.type}
         children="Fruits"
         {...getOverrideProps(overrides, "Fruits")}
       ></Text>

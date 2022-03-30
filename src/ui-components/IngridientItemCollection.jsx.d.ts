@@ -5,12 +5,15 @@
  **************************************************************************/
 
 import React from "react";
-import { Ingredient } from "../models";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
-import { ViewProps } from "@aws-amplify/ui-react";
-export declare type IngridientItemProps = React.PropsWithChildren<Partial<ViewProps> & {
-    ingredient?: Ingredient;
+import { CollectionProps } from "@aws-amplify/ui-react";
+export declare type IngridientItemCollectionProps = React.PropsWithChildren<Partial<CollectionProps<any>> & {
+    items?: any[];
+    overrideItems?: ({ item: any, index: number }: {
+        item: any;
+        index: any;
+    }) => EscapeHatchProps;
 } & {
     overrides?: EscapeHatchProps | undefined | null;
 }>;
-export default function IngridientItem(props: IngridientItemProps): React.ReactElement;
+export default function IngridientItemCollection(props: IngridientItemCollectionProps): React.ReactElement;

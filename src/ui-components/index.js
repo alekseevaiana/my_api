@@ -5,6 +5,8 @@
  **************************************************************************/
 
 export { default as IngridientCard } from "./IngridientCard";
+export { default as Close } from "./Close";
 export { default as IngridientItem } from "./IngridientItem";
 export { default as Nav } from "./Nav";
+export { default as IngridientItemCollection } from "./IngridientItemCollection";
 export { default as IngridientEditCard } from "./IngridientEditCard";

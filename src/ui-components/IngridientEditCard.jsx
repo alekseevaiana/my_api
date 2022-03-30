@@ -9,12 +9,12 @@ import React from "react";
 import { getOverrideProps } from "@aws-amplify/ui-react/internal";
 import {
   Button,
-  Icon,
   SelectField,
   Text,
   TextField,
   View,
 } from "@aws-amplify/ui-react";
+import Close from "./Close";
 export default function IngridientEditCard(props) {
   const { overrides, ...rest } = props;
   return (
@@ -46,7 +46,7 @@ export default function IngridientEditCard(props) {
         isDisabled={false}
         variation="default"
         children="Delete"
-        {...getOverrideProps(overrides, "Buttonvtq")}
+        {...getOverrideProps(overrides, "Buttonhza")}
       ></Button>
       <Button
         display="flex"
@@ -65,7 +65,7 @@ export default function IngridientEditCard(props) {
         isDisabled={false}
         variation="primary"
         children="Save"
-        {...getOverrideProps(overrides, "Buttonjoy")}
+        {...getOverrideProps(overrides, "Buttoneyw")}
       ></Button>
       <Text
         fontFamily="Inter"
@@ -121,54 +121,15 @@ export default function IngridientEditCard(props) {
         variation="default"
         {...getOverrideProps(overrides, "TextField")}
       ></TextField>
-      <View
-        padding="0px 0px 0px 0px"
+      <Close
         position="absolute"
-        top="2.48%"
-        bottom="88.84%"
-        left="84.76%"
-        right="3.6%"
+        top="2.07%"
+        bottom="89.26%"
+        left="85.6%"
+        right="2.77%"
+        padding="0px 0px 0px 0px"
         {...getOverrideProps(overrides, "Close")}
-      >
-        <Icon
-          width="42px"
-          height="42px"
-          viewBox={{ minX: 0, minY: 0, width: 42, height: 42 }}
-          paths={[
-            {
-              d: "M42 21C42 32.598 32.598 42 21 42C9.40202 42 0 32.598 0 21C0 9.40202 9.40202 0 21 0C32.598 0 42 9.40202 42 21Z",
-              fill: "rgba(4,125,149,1)",
-              fillRule: "nonzero",
-            },
-          ]}
-          position="absolute"
-          top="0%"
-          bottom="0%"
-          left="0%"
-          right="0%"
-          {...getOverrideProps(overrides, "Ellipse 1")}
-        ></Icon>
-        <Icon
-          position="absolute"
-          top="20%"
-          bottom="20%"
-          left="20%"
-          right="20%"
-          overflow="hidden"
-          padding="0px 0px 0px 0px"
-          viewBox={{ minX: 0, minY: 0, width: 24, height: 24 }}
-          paths={[
-            {
-              d: "M14 1.41L12.59 0L7 5.59L1.41 0L0 1.41L5.59 7L0 12.59L1.41 14L7 8.41L12.59 14L14 12.59L8.41 7L14 1.41Z",
-              fill: "rgba(13,26,38,1)",
-              fillRule: "nonzero",
-              style: { transform: "translate(20.83%, 20.83%)" },
-            },
-          ]}
-          type="close"
-          {...getOverrideProps(overrides, "\uD83D\uDD12Icon")}
-        ></Icon>
-      </View>
+      ></Close>
     </View>
   );
 }

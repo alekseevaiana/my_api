@@ -1,0 +1,6 @@
+type Ingredient @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  type: String
+}
+ 
