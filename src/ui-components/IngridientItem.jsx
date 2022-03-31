@@ -38,7 +38,7 @@ export default function IngridientItem(props) {
         padding="0px 0px 0px 0px"
         whiteSpace="pre-wrap"
         name={ingredient?.name}
-        children="Ingredient"
+        children="Ingredientgggg"
         {...getOverrideProps(overrides, "Ingredient")}
       ></Text>
       <Text
