@@ -7,6 +7,8 @@ import IngridientItem from "./ui-components/IngridientItem";
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
+  const [addCard, setAddCard] = useState(false);
+
   useEffect(() => {
     const pullData = async () => {
       const data = await API.graphql({ query: listIngredients });
@@ -29,6 +31,14 @@ function App() {
       marginRight: "5px",
       marginLeft: "5px",
     },
+    addCard: {
+      display: addCard ? "block" : "none",
+    },
+  };
+
+  const handleAdd = () => {
+    console.log("handle add");
+    setAddCard(true);
   };
 
   return (
@@ -54,6 +64,8 @@ function App() {
             );
           })}
       </div>
+
+      <button onClick={handleAdd}>Add new</button>
     </div>
   );
 }
