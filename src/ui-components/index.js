@@ -8,6 +8,7 @@ export { default as IngridientCard } from "./IngridientCard";
 export { default as IngridientAddCard } from "./IngridientAddCard";
 export { default as Close } from "./Close";
 export { default as IngridientItem } from "./IngridientItem";
+export { default as IngredientCard } from "./IngredientCard";
 export { default as Popup } from "./Popup";
 export { default as Nav } from "./Nav";
 export { default as IngridientEditCard } from "./IngridientEditCard";

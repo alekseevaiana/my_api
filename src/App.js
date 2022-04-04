@@ -1,12 +1,16 @@
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import Nav from "./ui-components/Nav";
 import { useEffect, useState } from "react";
+import { TextField, SelectField } from "@aws-amplify/ui-react";
+
 import { API } from "aws-amplify";
 import { listIngredients } from "./graphql/queries";
 import { createIngredient } from "./graphql/mutations";
 
 import IngridientItem from "./ui-components/IngridientItem";
 import IngridientAddCard from "./ui-components/IngridientAddCard";
+import Popup from "./components/Popup";
+import IngredientCard from "./ui-components/IngredientCard";
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
@@ -80,7 +84,20 @@ function App() {
             );
           })}
       </div>
-      <IngridientAddCard
+      <Popup
+        title="Add new ingredient"
+        onClose={() => setAddCard(false)}
+        display={addCard ? "block" : "none"}
+      >
+        <TextField label="Name" placeholder="Galadriel" />
+        <SelectField label="Fruit">
+          <option value="Other">Other</option>
+          <option value="Dairy">Dairy</option>
+          <option value="Meat">Meat</option>
+          <option value="Fruits">Fruits</option>
+        </SelectField>
+      </Popup>
+      {/* <IngridientAddCard
         style={style.addCard}
         overrides={{
           TextField: {
@@ -106,7 +123,7 @@ function App() {
             onClick: () => setAddCard(false),
           },
         }}
-      />
+      /> */}
       <button onClick={handleAdd}>Add new</button>
     </div>
   );
