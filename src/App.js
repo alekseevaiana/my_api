@@ -1,22 +1,28 @@
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import Nav from "./ui-components/Nav";
 import { useEffect, useState } from "react";
-import { TextField, SelectField } from "@aws-amplify/ui-react";
+import { TextField, SelectField, Button } from "@aws-amplify/ui-react";
 
 import { API } from "aws-amplify";
 import { listIngredients } from "./graphql/queries";
-import { createIngredient } from "./graphql/mutations";
+import {
+  createIngredient,
+  updateIngredient,
+  deleteIngredient,
+} from "./graphql/mutations";
 
 import IngridientItem from "./ui-components/IngridientItem";
-import IngridientAddCard from "./ui-components/IngridientAddCard";
 import Popup from "./components/Popup";
-import IngredientCard from "./ui-components/IngredientCard";
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
+  const [current, setCurrent] = useState();
+  const [currentV, setCurrentV] = useState();
+
   const [addCard, setAddCard] = useState(false);
-  const [name, setName] = useState();
-  const [ingredientType, setIngredientType] = useState();
+  const [updateCard, setUpdateCard] = useState(false);
+  const [name, setName] = useState("");
+  const [ingredientType, setIngredientType] = useState("Other");
 
   useEffect(() => {
     const pullData = async () => {
@@ -46,19 +52,39 @@ function App() {
   };
 
   const handleAdd = () => {
-    console.log("handle add");
     setAddCard(true);
   };
 
   const handleSave = async (name, ingredientType) => {
-    console.log("name: ", name);
-    console.log("type: ", ingredientType);
     const newItem = await API.graphql({
       query: createIngredient,
       variables: { input: { name, type: ingredientType } },
     });
     setAddCard(false);
     return newItem;
+  };
+
+  const handleOpenItemBtn = (id, version) => {
+    console.log("ID IS: ", id, "version: ", version);
+    setUpdateCard(true);
+    setCurrent(id);
+    setCurrentV(version);
+  };
+
+  const handleUpdate = async (_version, id, name, ingredientType) => {
+    const updateItem = await API.graphql({
+      query: updateIngredient,
+      variables: { input: { _version, id, name, type: ingredientType } },
+    });
+    return updateItem;
+  };
+
+  const handleDelete = async (_version, id) => {
+    const deleteItem = await API.graphql({
+      query: deleteIngredient,
+      variables: { input: { _version, id } },
+    });
+    return deleteItem;
   };
 
   return (
@@ -78,6 +104,9 @@ function App() {
                     Type: {
                       children: item.type,
                     },
+                    "\uD83D\uDD12Icon": {
+                      onClick: () => handleOpenItemBtn(item.id, item._version),
+                    },
                   }}
                 />
               </div>
@@ -89,41 +118,60 @@ function App() {
         onClose={() => setAddCard(false)}
         display={addCard ? "block" : "none"}
       >
-        <TextField label="Name" placeholder="Galadriel" />
-        <SelectField label="Fruit">
+        <TextField
+          label="Name"
+          placeholder="Galadriel"
+          onChange={(event) => setName(event.target.value)}
+        />
+        <SelectField
+          label="Type"
+          onChange={(event) => setIngredientType(event.target.value)}
+        >
           <option value="Other">Other</option>
           <option value="Dairy">Dairy</option>
           <option value="Meat">Meat</option>
           <option value="Fruits">Fruits</option>
         </SelectField>
+        <Button
+          variation="primary"
+          onClick={() => handleSave(name, ingredientType)}
+        >
+          Save
+        </Button>
       </Popup>
-      {/* <IngridientAddCard
-        style={style.addCard}
-        overrides={{
-          TextField: {
-            onChange: (event) => {
-              setName(event.target.value);
-            },
-          },
-          Button: {
-            onClick: () => handleSave(name, ingredientType),
-          },
-          SelectField: {
-            children: (
-              <>
-                <option value="Dairy">Dairy</option>
-                <option value="Meat">Meat</option>
-                <option value="Fruits">Fruits</option>
-                <option value="Other">Other</option>
-              </>
-            ),
-            onChange: (event) => setIngredientType(event.target.value),
-          },
-          Close: {
-            onClick: () => setAddCard(false),
-          },
-        }}
-      /> */}
+      <Popup
+        title="Update item"
+        onClose={() => setUpdateCard(false)}
+        display={updateCard ? "block" : "none"}
+      >
+        <TextField
+          label="Name"
+          placeholder="Galadriel"
+          onChange={(event) => setName(event.target.value)}
+          value={name}
+        />
+        <SelectField
+          label="Type"
+          onChange={(event) => setIngredientType(event.target.value)}
+        >
+          <option value="Other">Other</option>
+          <option value="Dairy">Dairy</option>
+          <option value="Meat">Meat</option>
+          <option value="Fruits">Fruits</option>
+        </SelectField>
+        <Button
+          variation="primary"
+          onClick={() => handleUpdate(currentV, current, name, ingredientType)}
+        >
+          Save
+        </Button>
+        <Button
+          variation="primary"
+          onClick={() => handleDelete(currentV, current)}
+        >
+          Delete
+        </Button>
+      </Popup>
       <button onClick={handleAdd}>Add new</button>
     </div>
   );
