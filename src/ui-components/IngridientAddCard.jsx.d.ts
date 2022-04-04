@@ -7,7 +7,7 @@
 import React from "react";
 import { EscapeHatchProps } from "@aws-amplify/ui-react/internal";
 import { ViewProps } from "@aws-amplify/ui-react";
-export declare type CloseProps = React.PropsWithChildren<Partial<ViewProps> & {
+export declare type IngridientAddCardProps = React.PropsWithChildren<Partial<ViewProps> & {
     overrides?: EscapeHatchProps | undefined | null;
 }>;
-export default function Close(props: CloseProps): React.ReactElement;
+export default function IngridientAddCard(props: IngridientAddCardProps): React.ReactElement;
