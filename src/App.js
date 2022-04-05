@@ -1,4 +1,5 @@
 import { withAuthenticator } from "@aws-amplify/ui-react";
+import "./App.css";
 import Nav from "./ui-components/Nav";
 import { useEffect, useState } from "react";
 import { TextField, SelectField, Button } from "@aws-amplify/ui-react";
@@ -27,13 +28,19 @@ function App() {
   useEffect(() => {
     const pullData = async () => {
       const data = await API.graphql({ query: listIngredients });
-      console.log(data.data.listIngredients.items);
-      setIngredients(data.data.listIngredients.items);
+      const items = data.data.listIngredients.items;
+      console.log(items);
+      const filtered = items.filter((item) => !item._deleted);
+      console.log("filtered", filtered);
+      setIngredients(filtered);
     };
     pullData();
   }, []);
 
   const style = {
+    pageWrapper: {
+      filter: addCard ? "blur(4px)" : "",
+    },
     wrapper: {
       display: "flex",
       flexDirection: "row",
@@ -80,6 +87,8 @@ function App() {
   };
 
   const handleDelete = async (_version, id) => {
+    console.log("delete version: ", _version);
+    console.log("delete id: ", id);
     const deleteItem = await API.graphql({
       query: deleteIngredient,
       variables: { input: { _version, id } },
@@ -89,56 +98,46 @@ function App() {
 
   return (
     <div className="App">
-      <Nav width="100%" />
-      <div style={style.wrapper}>
-        {ingredients &&
-          ingredients.map((item, index) => {
-            return (
-              <div key={item.id} style={style.item}>
-                <IngridientItem
-                  name={item.name}
-                  overrides={{
-                    Ingredient: {
-                      children: item.name,
-                    },
-                    Type: {
-                      children: item.type,
-                    },
-                    "\uD83D\uDD12Icon": {
-                      onClick: () => handleOpenItemBtn(item.id, item._version),
-                    },
-                  }}
-                />
-              </div>
-            );
-          })}
-      </div>
-      <Popup
-        title="Add new ingredient"
-        onClose={() => setAddCard(false)}
-        display={addCard ? "block" : "none"}
-      >
-        <TextField
-          label="Name"
-          placeholder="Galadriel"
-          onChange={(event) => setName(event.target.value)}
-        />
-        <SelectField
-          label="Type"
-          onChange={(event) => setIngredientType(event.target.value)}
-        >
-          <option value="Other">Other</option>
-          <option value="Dairy">Dairy</option>
-          <option value="Meat">Meat</option>
-          <option value="Fruits">Fruits</option>
-        </SelectField>
+      <div className="page-wrapper" style={style.pageWrapper}>
+        <Nav width="100%" />
+        <div style={style.wrapper}>
+          {ingredients &&
+            ingredients.map((item, index) => {
+              return (
+                <div key={item.id} style={style.item}>
+                  <IngridientItem
+                    name={item.name}
+                    overrides={{
+                      Ingredient: {
+                        children: item.name,
+                      },
+                      Type: {
+                        children: item.type,
+                      },
+                      "\uD83D\uDD12Icon": {
+                        onClick: () =>
+                          handleOpenItemBtn(item.id, item._version),
+                      },
+                    }}
+                  />
+                </div>
+              );
+            })}
+        </div>
+
         <Button
           variation="primary"
-          onClick={() => handleSave(name, ingredientType)}
+          onClick={handleAdd}
+          style={{
+            position: "fixed",
+            left: "50%",
+            transform: "translate(-50%, 0)",
+            bottom: "20px",
+          }}
         >
-          Save
+          Add new
         </Button>
-      </Popup>
+      </div>
       <Popup
         title="Update item"
         onClose={() => setUpdateCard(false)}
@@ -172,7 +171,32 @@ function App() {
           Delete
         </Button>
       </Popup>
-      <button onClick={handleAdd}>Add new</button>
+      <Popup
+        title="Add new ingredient"
+        onClose={() => setAddCard(false)}
+        display={addCard ? "block" : "none"}
+      >
+        <TextField
+          label="Name"
+          placeholder="Galadriel"
+          onChange={(event) => setName(event.target.value)}
+        />
+        <SelectField
+          label="Type"
+          onChange={(event) => setIngredientType(event.target.value)}
+        >
+          <option value="Other">Other</option>
+          <option value="Dairy">Dairy</option>
+          <option value="Meat">Meat</option>
+          <option value="Fruits">Fruits</option>
+        </SelectField>
+        <Button
+          variation="primary"
+          onClick={() => handleSave(name, ingredientType)}
+        >
+          Save
+        </Button>
+      </Popup>
     </div>
   );
 }

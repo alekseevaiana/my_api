@@ -6,10 +6,14 @@
 
 /* eslint-disable */
 import React from "react";
-import { getOverrideProps } from "@aws-amplify/ui-react/internal";
+import {
+  getOverrideProps,
+  useAuthSignOutAction,
+} from "@aws-amplify/ui-react/internal";
 import { Button, Flex, Text } from "@aws-amplify/ui-react";
 export default function Nav(props) {
   const { overrides, ...rest } = props;
+  const buttonOnClick = useAuthSignOutAction({ global: false });
   return (
     <Flex
       gap="10px"
@@ -58,6 +62,9 @@ export default function Nav(props) {
         isDisabled={false}
         variation="link"
         children="Sign Out"
+        onClick={() => {
+          buttonOnClick();
+        }}
         {...getOverrideProps(overrides, "Button")}
       ></Button>
     </Flex>

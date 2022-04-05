@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 export default function Popup({ children, title, onClose, display }) {
   return (
     <div
+      className="popup"
+      id="popup"
       style={{
-        position: "relative",
+        position: "fixed",
         width: "361px",
         background: "#FAFAFA",
         border: "1px solid #E5E5E5",
@@ -14,6 +16,10 @@ export default function Popup({ children, title, onClose, display }) {
         borderRadius: "30px",
         padding: "20px",
         display: display,
+        backdropFilter: "blur(8px)",
+        left: "50%",
+        transform: "translate(-50%, 0)",
+        top: "15%",
       }}
     >
       <Close
