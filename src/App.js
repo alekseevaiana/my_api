@@ -39,7 +39,7 @@ function App() {
 
   const style = {
     pageWrapper: {
-      filter: addCard ? "blur(4px)" : "",
+      filter: addCard || updateCard ? "blur(10px)" : "",
     },
     wrapper: {
       display: "flex",
@@ -150,6 +150,7 @@ function App() {
           value={name}
         />
         <SelectField
+          style={{ marginBottom: "10px" }}
           label="Type"
           onChange={(event) => setIngredientType(event.target.value)}
         >
@@ -160,6 +161,7 @@ function App() {
         </SelectField>
         <Button
           variation="primary"
+          style={{ marginRight: "10px" }}
           onClick={() => handleUpdate(currentV, current, name, ingredientType)}
         >
           Save
@@ -184,6 +186,7 @@ function App() {
         <SelectField
           label="Type"
           onChange={(event) => setIngredientType(event.target.value)}
+          style={{ marginBottom: "10px" }}
         >
           <option value="Other">Other</option>
           <option value="Dairy">Dairy</option>

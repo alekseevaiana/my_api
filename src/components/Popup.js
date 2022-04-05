@@ -30,7 +30,9 @@ export default function Popup({ children, title, onClose, display }) {
           },
         }}
       />
-      <div>{title}</div>
+      <div className="title" style={{ fontSize: "24px", marginBottom: "15px" }}>
+        {title}
+      </div>
       {children}
     </div>
   );
