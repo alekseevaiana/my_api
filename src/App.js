@@ -43,8 +43,24 @@ function App() {
       next: () => pullData(),
       error: (err) => console.log(err),
     });
+    const subscriptionOnCreate = API.graphql({
+      query: onCreateIngredient,
+    }).subscribe({
+      next: () => pullData(),
+      error: (err) => console.log(err),
+    });
+    const subscriptionOnDelete = API.graphql({
+      query: onDeleteIngredient,
+    }).subscribe({
+      next: () => pullData(),
+      error: (err) => console.log(err),
+    });
     pullData();
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      subscriptionOnCreate.unsubscribe();
+      subscriptionOnDelete.unsubscribe();
+    };
   }, []);
 
   const style = {
@@ -73,12 +89,12 @@ function App() {
   };
 
   const handleSave = async (name, ingredientType) => {
-    const newItem = await API.graphql({
+    const result = await API.graphql({
       query: createIngredient,
       variables: { input: { name, type: ingredientType } },
     });
+    // setIngredients((prev) => [...prev, result.data.createIngredient]);
     setAddCard(false);
-    return newItem;
   };
 
   const handleOpenItemBtn = (id, version) => {
@@ -104,7 +120,7 @@ function App() {
       query: deleteIngredient,
       variables: { input: { _version, id } },
     });
-    return deleteItem;
+    setUpdateCard(false);
   };
 
   return (
