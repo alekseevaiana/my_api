@@ -37,30 +37,7 @@ function App() {
       const filtered = items.filter((item) => !item._deleted);
       setIngredients(filtered);
     };
-    const subscription = API.graphql({
-      query: onUpdateIngredient,
-    }).subscribe({
-      next: () => pullData(),
-      error: (err) => console.log(err),
-    });
-    const subscriptionOnCreate = API.graphql({
-      query: onCreateIngredient,
-    }).subscribe({
-      next: () => pullData(),
-      error: (err) => console.log(err),
-    });
-    const subscriptionOnDelete = API.graphql({
-      query: onDeleteIngredient,
-    }).subscribe({
-      next: () => pullData(),
-      error: (err) => console.log(err),
-    });
     pullData();
-    return () => {
-      subscription.unsubscribe();
-      subscriptionOnCreate.unsubscribe();
-      subscriptionOnDelete.unsubscribe();
-    };
   }, []);
 
   const style = {
