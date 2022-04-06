@@ -124,9 +124,9 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App" style={{ marginBottom: "85px", marginTop: "100px" }}>
       <div className="page-wrapper" style={style.pageWrapper}>
-        <Nav width="100%" />
+        <Nav width="100%" position="fixed" style={{ top: "0", zIndex: "99" }} />
         <div style={style.wrapper}>
           {ingredients &&
             ingredients.map((item, index) => {
