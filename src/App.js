@@ -11,6 +11,11 @@ import {
   updateIngredient,
   deleteIngredient,
 } from "./graphql/mutations";
+import {
+  onCreateIngredient,
+  onDeleteIngredient,
+  onUpdateIngredient,
+} from "./graphql/subscriptions";
 
 import IngridientItem from "./ui-components/IngridientItem";
 import Popup from "./components/Popup";
@@ -29,12 +34,17 @@ function App() {
     const pullData = async () => {
       const data = await API.graphql({ query: listIngredients });
       const items = data.data.listIngredients.items;
-      console.log(items);
       const filtered = items.filter((item) => !item._deleted);
-      console.log("filtered", filtered);
       setIngredients(filtered);
     };
+    const subscription = API.graphql({
+      query: onUpdateIngredient,
+    }).subscribe({
+      next: () => pullData(),
+      error: (err) => console.log(err),
+    });
     pullData();
+    return () => subscription.unsubscribe();
   }, []);
 
   const style = {
@@ -83,6 +93,7 @@ function App() {
       query: updateIngredient,
       variables: { input: { _version, id, name, type: ingredientType } },
     });
+    setUpdateCard(false);
     return updateItem;
   };
 
@@ -133,9 +144,11 @@ function App() {
             left: "50%",
             transform: "translate(-50%, 0)",
             bottom: "20px",
+            boxShadow:
+              "3px 4px 10px rgb(0 0 0 / 25%), -3px 4px 10px rgb(0 0 0 / 25%)",
           }}
         >
-          Add new
+          Add new ingredient
         </Button>
       </div>
       <Popup
