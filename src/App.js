@@ -19,13 +19,14 @@ import {
 
 import IngridientItem from "./ui-components/IngridientItem";
 import Popup from "./components/Popup";
+import CreateIngredient from "./components/CreateIngredient";
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
-  const [current, setCurrent] = useState();
-  const [currentV, setCurrentV] = useState();
+  const [currentId, setCurrentId] = useState();
+  const [currentVersion, setCurrentVersion] = useState();
 
-  const [addCard, setAddCard] = useState(false);
+  const [showAddCard, setShowAddCard] = useState(false);
   const [updateCard, setUpdateCard] = useState(false);
   const [name, setName] = useState("");
   const [ingredientType, setIngredientType] = useState("Other");
@@ -60,7 +61,7 @@ function App() {
 
   const style = {
     pageWrapper: {
-      filter: addCard || updateCard ? "blur(10px)" : "",
+      filter: showAddCard || updateCard ? "blur(10px)" : "",
     },
     wrapper: {
       display: "flex",
@@ -74,13 +75,13 @@ function App() {
       marginRight: "5px",
       marginLeft: "5px",
     },
-    addCard: {
-      display: addCard ? "block" : "none",
+    showAddCard: {
+      display: showAddCard ? "block" : "none",
     },
   };
 
-  const handleAdd = () => {
-    setAddCard(true);
+  const handleShowAddCard = (bool) => {
+    setShowAddCard(bool);
   };
 
   const handleSave = async (name, ingredientType) => {
@@ -89,13 +90,21 @@ function App() {
       variables: { input: { name, type: ingredientType } },
     });
     setIngredients((prev) => [result.data.createIngredient, ...prev]);
-    setAddCard(false);
+    // setAddCard(false);
+  };
+
+  const handleIngredientCreate = async (data) => {
+    const result = await API.graphql({
+      query: createIngredient,
+      variables: { input: { name: data.name, type: data.type } },
+    });
+    setShowAddCard(false);
   };
 
   const handleOpenItemBtn = (id, version) => {
     setUpdateCard(true);
-    setCurrent(id);
-    setCurrentV(version);
+    setCurrentId(id);
+    setCurrentVersion(version);
   };
 
   const handleUpdate = async (_version, id, name, ingredientType) => {
@@ -147,7 +156,7 @@ function App() {
 
         <Button
           variation="primary"
-          onClick={handleAdd}
+          onClick={() => handleShowAddCard(true)}
           style={{
             position: "fixed",
             left: "50%",
@@ -184,44 +193,25 @@ function App() {
         <Button
           variation="primary"
           style={{ marginRight: "10px" }}
-          onClick={() => handleUpdate(currentV, current, name, ingredientType)}
+          onClick={() =>
+            handleUpdate(currentVersion, currentId, name, ingredientType)
+          }
         >
           Save
         </Button>
         <Button
           variation="primary"
-          onClick={() => handleDelete(currentV, current)}
+          onClick={() => handleDelete(currentVersion, currentId)}
         >
           Delete
         </Button>
       </Popup>
-      <Popup
-        title="Add new ingredient"
-        onClose={() => setAddCard(false)}
-        display={addCard ? "block" : "none"}
-      >
-        <TextField
-          label="Name"
-          placeholder="Galadriel"
-          onChange={(event) => setName(event.target.value)}
+      <div style={style.showAddCard}>
+        <CreateIngredient
+          onChange={handleIngredientCreate}
+          onClose={() => setShowAddCard(false)}
         />
-        <SelectField
-          label="Type"
-          onChange={(event) => setIngredientType(event.target.value)}
-          style={{ marginBottom: "10px" }}
-        >
-          <option value="Other">Other</option>
-          <option value="Dairy">Dairy</option>
-          <option value="Meat">Meat</option>
-          <option value="Fruits">Fruits</option>
-        </SelectField>
-        <Button
-          variation="primary"
-          onClick={() => handleSave(name, ingredientType)}
-        >
-          Save
-        </Button>
-      </Popup>
+      </div>
     </div>
   );
 }
