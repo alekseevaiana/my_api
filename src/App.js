@@ -20,6 +20,7 @@ import {
 import IngridientItem from "./ui-components/IngridientItem";
 import Popup from "./components/Popup";
 import CreateIngredient from "./components/CreateIngredient";
+import UpdateIngredient from "./components/UpdateIngredient";
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
@@ -27,7 +28,7 @@ function App() {
   const [currentVersion, setCurrentVersion] = useState();
 
   const [showAddCard, setShowAddCard] = useState(false);
-  const [updateCard, setUpdateCard] = useState(false);
+  const [showUpdateCard, setShowUpdateCard] = useState(false);
   const [name, setName] = useState("");
   const [ingredientType, setIngredientType] = useState("Other");
 
@@ -61,7 +62,7 @@ function App() {
 
   const style = {
     pageWrapper: {
-      filter: showAddCard || updateCard ? "blur(10px)" : "",
+      filter: showAddCard || showUpdateCard ? "blur(10px)" : "",
     },
     wrapper: {
       display: "flex",
@@ -101,8 +102,23 @@ function App() {
     setShowAddCard(false);
   };
 
+  const handleIngredientChange = async (data) => {
+    const updateItem = await API.graphql({
+      query: updateIngredient,
+      variables: {
+        input: {
+          _version: data._version,
+          id: data.id,
+          name: data.name,
+          type: data.type,
+        },
+      },
+    });
+    setShowUpdateCard(false);
+  };
+
   const handleOpenItemBtn = (id, version) => {
-    setUpdateCard(true);
+    setShowUpdateCard(true);
     setCurrentId(id);
     setCurrentVersion(version);
   };
@@ -112,7 +128,7 @@ function App() {
       query: updateIngredient,
       variables: { input: { _version, id, name, type: ingredientType } },
     });
-    setUpdateCard(false);
+    setShowUpdateCard(false);
   };
 
   const handleDelete = async (_version, id) => {
@@ -122,7 +138,7 @@ function App() {
       query: deleteIngredient,
       variables: { input: { _version, id } },
     });
-    setUpdateCard(false);
+    setShowUpdateCard(false);
   };
 
   return (
@@ -171,8 +187,8 @@ function App() {
       </div>
       <Popup
         title="Update item"
-        onClose={() => setUpdateCard(false)}
-        display={updateCard ? "block" : "none"}
+        onClose={() => setShowUpdateCard(false)}
+        display={showUpdateCard ? "block" : "none"}
       >
         <TextField
           label="Name"
@@ -212,6 +228,12 @@ function App() {
           onClose={() => setShowAddCard(false)}
         />
       </div>
+      {/* <div style={style.showAddCard}>
+        <UpdateIngredient
+          onChange={handleIngredientChange}
+          onClose={() => setShowAddCard(false)}
+        />
+      </div> */}
     </div>
   );
 }

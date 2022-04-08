@@ -5,7 +5,6 @@ import { TextField, SelectField, Button } from "@aws-amplify/ui-react";
 export default function CreateIngredient({ onChange, onClose }) {
   const [name, setName] = useState("");
   const [ingredientType, setIngredientType] = useState("Other");
-  const [show, setShow] = useState(onClose);
 
   const handleSubmit = (event) => {
     event.preventDefault();
