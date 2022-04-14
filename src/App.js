@@ -24,13 +24,10 @@ import UpdateIngredient from "./components/UpdateIngredient";
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
-  const [currentId, setCurrentId] = useState();
-  const [currentVersion, setCurrentVersion] = useState();
+  const [currentIngredient, setCurrentIngredient] = useState({});
 
   const [showAddCard, setShowAddCard] = useState(false);
   const [showUpdateCard, setShowUpdateCard] = useState(false);
-  const [name, setName] = useState("");
-  const [ingredientType, setIngredientType] = useState("Other");
 
   useEffect(() => {
     const pullData = async () => {
@@ -79,19 +76,13 @@ function App() {
     showAddCard: {
       display: showAddCard ? "block" : "none",
     },
+    showUpdateCard: {
+      display: showUpdateCard ? "block" : "none",
+    },
   };
 
   const handleShowAddCard = (bool) => {
     setShowAddCard(bool);
-  };
-
-  const handleSave = async (name, ingredientType) => {
-    const result = await API.graphql({
-      query: createIngredient,
-      variables: { input: { name, type: ingredientType } },
-    });
-    setIngredients((prev) => [result.data.createIngredient, ...prev]);
-    // setAddCard(false);
   };
 
   const handleIngredientCreate = async (data) => {
@@ -117,26 +108,16 @@ function App() {
     setShowUpdateCard(false);
   };
 
-  const handleOpenItemBtn = (id, version) => {
+  const handleOpenItemBtn = (item) => {
+    console.log("current item is", item);
+    setCurrentIngredient(item);
     setShowUpdateCard(true);
-    setCurrentId(id);
-    setCurrentVersion(version);
   };
 
-  const handleUpdate = async (_version, id, name, ingredientType) => {
-    const updateItem = await API.graphql({
-      query: updateIngredient,
-      variables: { input: { _version, id, name, type: ingredientType } },
-    });
-    setShowUpdateCard(false);
-  };
-
-  const handleDelete = async (_version, id) => {
-    console.log("delete version: ", _version);
-    console.log("delete id: ", id);
+  const handleDelete = async (item) => {
     const deleteItem = await API.graphql({
       query: deleteIngredient,
-      variables: { input: { _version, id } },
+      variables: { input: { _version: item._version, id: item.id } },
     });
     setShowUpdateCard(false);
   };
@@ -160,8 +141,7 @@ function App() {
                         children: item.type,
                       },
                       "\uD83D\uDD12Icon": {
-                        onClick: () =>
-                          handleOpenItemBtn(item.id, item._version),
+                        onClick: () => handleOpenItemBtn(item),
                       },
                     }}
                   />
@@ -185,7 +165,7 @@ function App() {
           Add new ingredient
         </Button>
       </div>
-      <Popup
+      {/* <Popup
         title="Update item"
         onClose={() => setShowUpdateCard(false)}
         display={showUpdateCard ? "block" : "none"}
@@ -221,19 +201,21 @@ function App() {
         >
           Delete
         </Button>
-      </Popup>
+      </Popup> */}
       <div style={style.showAddCard}>
         <CreateIngredient
           onChange={handleIngredientCreate}
           onClose={() => setShowAddCard(false)}
         />
       </div>
-      {/* <div style={style.showAddCard}>
+      <div style={style.showUpdateCard}>
         <UpdateIngredient
+          currentIngredient={currentIngredient}
           onChange={handleIngredientChange}
-          onClose={() => setShowAddCard(false)}
+          onDelete={handleDelete}
+          onClose={() => setShowUpdateCard(false)}
         />
-      </div> */}
+      </div>
     </div>
   );
 }
