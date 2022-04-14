@@ -7,8 +7,13 @@ You can list/create/update/delete ingredients.
 
 `npm start`
 
-## Preview
+## Preview screenshots
+
+### Main screen
+
+<!-- ![Create item screen](src/images/my_api_create.png) -->
+<img src="src/images/my_api_main.png" alt="Create item screen" width="400" height="600">
 
 ### Create item screen
 
-![Create item screen](src/images/my_api_create.png)
+<img src="src/images/my_api_create.png" alt="Create item screen" width="400" height="600">
