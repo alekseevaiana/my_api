@@ -17,9 +17,7 @@ export default function UpdateIngredient({
   console.log("update ingredient current ingredient", currentIngredient);
   const handleSubmit = (event) => {
     event.preventDefault();
-    // update old ingredient
     const updated = { ...currentIngredient, name, ingredientType };
-    console.log("updated ingredient ===>", updated);
     onChange(updated);
   };
 
@@ -50,7 +48,6 @@ export default function UpdateIngredient({
               variation="primary"
               style={{ marginRight: "10px" }}
               type="submit"
-              //   onClick={() => onChange(currentIngredient)}
             >
               Save
             </Button>

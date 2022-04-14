@@ -18,14 +18,12 @@ import {
 } from "./graphql/subscriptions";
 
 import IngridientItem from "./ui-components/IngridientItem";
-import Popup from "./components/Popup";
 import CreateIngredient from "./components/CreateIngredient";
 import UpdateIngredient from "./components/UpdateIngredient";
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
   const [currentIngredient, setCurrentIngredient] = useState({});
-
   const [showAddCard, setShowAddCard] = useState(false);
   const [showUpdateCard, setShowUpdateCard] = useState(false);
 
@@ -79,10 +77,6 @@ function App() {
     showUpdateCard: {
       display: showUpdateCard ? "block" : "none",
     },
-  };
-
-  const handleShowAddCard = (bool) => {
-    setShowAddCard(bool);
   };
 
   const handleIngredientCreate = async (data) => {
@@ -152,7 +146,7 @@ function App() {
 
         <Button
           variation="primary"
-          onClick={() => handleShowAddCard(true)}
+          onClick={() => setShowAddCard(true)}
           style={{
             position: "fixed",
             left: "50%",
@@ -165,57 +159,20 @@ function App() {
           Add new ingredient
         </Button>
       </div>
-      {/* <Popup
-        title="Update item"
-        onClose={() => setShowUpdateCard(false)}
-        display={showUpdateCard ? "block" : "none"}
-      >
-        <TextField
-          label="Name"
-          placeholder="Galadriel"
-          onChange={(event) => setName(event.target.value)}
-          value={name}
-        />
-        <SelectField
-          style={{ marginBottom: "10px" }}
-          label="Type"
-          onChange={(event) => setIngredientType(event.target.value)}
-        >
-          <option value="Other">Other</option>
-          <option value="Dairy">Dairy</option>
-          <option value="Meat">Meat</option>
-          <option value="Fruits">Fruits</option>
-        </SelectField>
-        <Button
-          variation="primary"
-          style={{ marginRight: "10px" }}
-          onClick={() =>
-            handleUpdate(currentVersion, currentId, name, ingredientType)
-          }
-        >
-          Save
-        </Button>
-        <Button
-          variation="primary"
-          onClick={() => handleDelete(currentVersion, currentId)}
-        >
-          Delete
-        </Button>
-      </Popup> */}
-      <div style={style.showAddCard}>
+      {showAddCard && (
         <CreateIngredient
           onChange={handleIngredientCreate}
           onClose={() => setShowAddCard(false)}
         />
-      </div>
-      <div style={style.showUpdateCard}>
+      )}
+      {showUpdateCard && (
         <UpdateIngredient
           currentIngredient={currentIngredient}
           onChange={handleIngredientChange}
           onDelete={handleDelete}
           onClose={() => setShowUpdateCard(false)}
         />
-      </div>
+      )}
     </div>
   );
 }
