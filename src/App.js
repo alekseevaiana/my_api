@@ -2,7 +2,7 @@ import { withAuthenticator } from "@aws-amplify/ui-react";
 import "./App.css";
 import Nav from "./ui-components/Nav";
 import { useEffect, useState } from "react";
-import { TextField, SelectField, Button } from "@aws-amplify/ui-react";
+import { Button } from "@aws-amplify/ui-react";
 
 import { API } from "aws-amplify";
 import { listIngredients } from "./graphql/queries";
@@ -17,7 +17,6 @@ import {
   onUpdateIngredient,
 } from "./graphql/subscriptions";
 
-import IngridientItem from "./ui-components/IngridientItem";
 import CreateIngredient from "./components/CreateIngredient";
 import UpdateIngredient from "./components/UpdateIngredient";
 import IngredientsList from "./components/IngredientsList";
