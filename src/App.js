@@ -20,6 +20,7 @@ import {
 import IngridientItem from "./ui-components/IngridientItem";
 import CreateIngredient from "./components/CreateIngredient";
 import UpdateIngredient from "./components/UpdateIngredient";
+import IngredientsList from "./components/IngredientsList";
 
 function App() {
   const [ingredients, setIngredients] = useState([]);
@@ -59,18 +60,7 @@ function App() {
     pageWrapper: {
       filter: showAddCard || showUpdateCard ? "blur(10px)" : "",
     },
-    wrapper: {
-      display: "flex",
-      flexDirection: "row",
-      flexWrap: "wrap",
-      justifyContent: "center",
-      marginTop: "30px",
-    },
-    item: {
-      marginTop: "10px",
-      marginRight: "5px",
-      marginLeft: "5px",
-    },
+
     showAddCard: {
       display: showAddCard ? "block" : "none",
     },
@@ -119,30 +109,10 @@ function App() {
     <div className="App" style={{ marginBottom: "85px", marginTop: "100px" }}>
       <div className="page-wrapper" style={style.pageWrapper}>
         <Nav width="100%" position="fixed" style={{ top: "0", zIndex: "99" }} />
-        <div style={style.wrapper}>
-          {ingredients &&
-            ingredients.map((item, index) => {
-              return (
-                <div key={item.id} style={style.item}>
-                  <IngridientItem
-                    name={item.name}
-                    overrides={{
-                      Ingredient: {
-                        children: item.name,
-                      },
-                      Type: {
-                        children: item.type,
-                      },
-                      "\uD83D\uDD12Icon": {
-                        onClick: () => handleOpenItemBtn(item),
-                      },
-                    }}
-                  />
-                </div>
-              );
-            })}
-        </div>
-
+        <IngredientsList
+          onIconClick={handleOpenItemBtn}
+          ingredients={ingredients}
+        />
         <Button
           variation="primary"
           onClick={() => setShowAddCard(true)}

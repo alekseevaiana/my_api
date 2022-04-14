@@ -23,7 +23,7 @@ export default function Popup({ children, title, onClose, display }) {
       }}
     >
       <Close
-        style={{ marginLeft: "auto" }}
+        style={{ marginLeft: "auto", cursor: "pointer" }}
         overrides={{
           Close: {
             onClick: onClose,

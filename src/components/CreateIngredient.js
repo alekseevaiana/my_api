@@ -16,7 +16,7 @@ export default function CreateIngredient({ onChange, onClose }) {
       <form autoComplete="off" onSubmit={handleSubmit}>
         <TextField
           label="Name"
-          placeholder="Galadriel"
+          placeholder="Name of ingredient"
           onChange={(event) => setName(event.target.value)}
         />
         <SelectField
@@ -29,11 +29,7 @@ export default function CreateIngredient({ onChange, onClose }) {
           <option value="Meat">Meat</option>
           <option value="Fruits">Fruits</option>
         </SelectField>
-        <Button
-          variation="primary"
-          //   onClick={() => handleSave(name, ingredientType)}
-          type="submit"
-        >
+        <Button variation="primary" type="submit">
           Save
         </Button>
       </form>
