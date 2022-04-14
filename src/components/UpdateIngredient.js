@@ -14,7 +14,6 @@ export default function UpdateIngredient({
   const [ingredientType, setIngredientType] = useState(
     currentIngredient ? currentIngredient.type : ""
   );
-  console.log("update ingredient current ingredient", currentIngredient);
   const handleSubmit = (event) => {
     event.preventDefault();
     const updated = { ...currentIngredient, name, ingredientType };
@@ -26,7 +25,6 @@ export default function UpdateIngredient({
       {currentIngredient && (
         <Popup title="Update item" onClose={onClose}>
           <form autoComplete="off" onSubmit={handleSubmit}>
-            {console.log("name of ingredient", name)}
             <TextField
               label="Name"
               placeholder="Galadriel"

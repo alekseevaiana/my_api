@@ -103,7 +103,6 @@ function App() {
   };
 
   const handleOpenItemBtn = (item) => {
-    console.log("current item is", item);
     setCurrentIngredient(item);
     setShowUpdateCard(true);
   };
