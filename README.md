@@ -1,7 +1,9 @@
 # My API
 
 Project was created to practice with Amazon Amplify.
-You can list/create/update/delete ingredients.
+You can create/update/delete ingredients.
+
+Main link: https://master.d1e77a5mh3gbbs.amplifyapp.com/
 
 ## To run locally
 
