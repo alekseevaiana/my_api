@@ -46,7 +46,7 @@ export default function IngridientEditCard(props) {
         isDisabled={false}
         variation="default"
         children="Delete"
-        {...getOverrideProps(overrides, "Buttonvwi")}
+        {...getOverrideProps(overrides, "Buttonbwc")}
       ></Button>
       <Button
         display="flex"
@@ -65,13 +65,13 @@ export default function IngridientEditCard(props) {
         isDisabled={false}
         variation="primary"
         children="Save"
-        {...getOverrideProps(overrides, "Buttonxim")}
+        {...getOverrideProps(overrides, "Buttonmss")}
       ></Button>
       <Text
         fontFamily="Inter"
         fontSize="24px"
         fontWeight="700"
-        color="rgba(0,0,0,1)"
+        color="rgba(2,78,94,1)"
         lineHeight="16px"
         textAlign="left"
         display="flex"

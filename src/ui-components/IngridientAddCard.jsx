@@ -53,7 +53,7 @@ export default function IngridientAddCard(props) {
         fontFamily="Inter"
         fontSize="24px"
         fontWeight="700"
-        color="rgba(0,0,0,1)"
+        color="rgba(2,78,94,1)"
         lineHeight="16px"
         textAlign="left"
         display="flex"
@@ -65,7 +65,7 @@ export default function IngridientAddCard(props) {
         padding="0px 0px 0px 0px"
         whiteSpace="pre-wrap"
         children="Add new ingredinet"
-        {...getOverrideProps(overrides, "Edit")}
+        {...getOverrideProps(overrides, "Add new ingredinet")}
       ></Text>
       <SelectField
         display="flex"

@@ -16,7 +16,10 @@ export default function UpdateIngredient({
   );
   const handleSubmit = (event) => {
     event.preventDefault();
-    const updated = { ...currentIngredient, name, ingredientType };
+    console.log("ingr type: ", ingredientType);
+    console.log("current ingr: ", currentIngredient);
+    const updated = { ...currentIngredient, type: ingredientType, name };
+    console.log("updated: ", updated);
     onChange(updated);
   };
 
