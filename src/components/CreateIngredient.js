@@ -8,7 +8,7 @@ export default function CreateIngredient({ onChange, onClose }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onChange({ name, ingredientType });
+    onChange({ name, type: ingredientType });
   };
 
   return (

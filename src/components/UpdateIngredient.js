@@ -16,10 +16,7 @@ export default function UpdateIngredient({
   );
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("ingr type: ", ingredientType);
-    console.log("current ingr: ", currentIngredient);
     const updated = { ...currentIngredient, type: ingredientType, name };
-    console.log("updated: ", updated);
     onChange(updated);
   };
 
@@ -30,7 +27,7 @@ export default function UpdateIngredient({
           <form autoComplete="off" onSubmit={handleSubmit}>
             <TextField
               label="Name"
-              placeholder="Galadriel"
+              placeholder="Name"
               onChange={(event) => setName(event.target.value)}
               value={name}
             />
