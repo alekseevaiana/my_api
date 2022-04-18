@@ -45,4 +45,4 @@ For my purposes I used:
 <img src="src/images/my_api_create.png" alt="Create item screen" width="400" height="600">
 
 The Core Team
-Made at Qwasar Silicon Valley Qwasar Silicon Valley Logo
+Made at Qwasar Silicon Valley
