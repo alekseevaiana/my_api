@@ -55,6 +55,12 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    fetch("https://api.spoonacular.com/food/ingredients")
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+  });
+
   const style = {
     pageWrapper: {
       filter: showAddCard || showUpdateCard ? "blur(10px)" : "",
