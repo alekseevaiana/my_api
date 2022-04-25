@@ -3,6 +3,7 @@ import "./App.css";
 import Nav from "./ui-components/Nav";
 import { useEffect, useState } from "react";
 import { Button } from "@aws-amplify/ui-react";
+import { Pagination, usePagination } from "@aws-amplify/ui-react";
 
 import { API } from "aws-amplify";
 import { listIngredients } from "./graphql/queries";
@@ -26,13 +27,23 @@ function App() {
   const [currentIngredient, setCurrentIngredient] = useState({});
   const [showAddCard, setShowAddCard] = useState(false);
   const [showUpdateCard, setShowUpdateCard] = useState(false);
+  const [currentPageIndex, setCurrentPageIndex] = useState(1);
+  const [nextItemToken, setNextItemToken] = useState(null);
 
   useEffect(() => {
     const pullData = async () => {
-      const data = await API.graphql({ query: listIngredients });
+      const data = await API.graphql({
+        query: listIngredients,
+        variables: {
+          limit: 20,
+        },
+      });
       const items = data.data.listIngredients.items;
+      const nextToken = data.data.listIngredients.nextToken;
       const filtered = items.filter((item) => !item._deleted);
+      console.log("filtered data", filtered);
       setIngredients(filtered);
+      setNextItemToken(nextToken);
     };
     const getSubscription = (queryType) => {
       const subscription = API.graphql({
@@ -55,12 +66,6 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    fetch("https://api.spoonacular.com/food/ingredients")
-      .then((response) => response.json())
-      .then((data) => console.log(data));
-  });
-
   const style = {
     pageWrapper: {
       filter: showAddCard || showUpdateCard ? "blur(10px)" : "",
@@ -72,6 +77,37 @@ function App() {
     showUpdateCard: {
       display: showUpdateCard ? "block" : "none",
     },
+  };
+
+  const handlePaginationChange = (newPageIndex, prevPageIndex) => {
+    console.log(
+      `handleOnChange \n - newPageIndex: ${newPageIndex} \n - prevPageIndex: ${prevPageIndex}`
+    );
+    setCurrentPageIndex(newPageIndex);
+  };
+
+  const handleNextPage = async () => {
+    console.log("handleNextPage");
+    setCurrentPageIndex(currentPageIndex + 1);
+    const data = await API.graphql({
+      query: listIngredients,
+      variables: {
+        limit: 20,
+        nextToken: nextItemToken,
+      },
+    });
+    const items = data.data.listIngredients.items;
+    const newToken = data.data.listIngredients.nextToken;
+    const filtered = items.filter((item) => !item._deleted);
+    console.log("filtered data", filtered);
+    setIngredients(filtered);
+    setNextItemToken(newToken);
+    console.log("new data", filtered);
+  };
+
+  const handlePreviousPage = () => {
+    console.log("handlePreviousPage");
+    setCurrentPageIndex(currentPageIndex - 1);
   };
 
   const handleIngredientCreate = async (data) => {
@@ -112,6 +148,14 @@ function App() {
 
   return (
     <div className="App" style={{ marginBottom: "85px", marginTop: "100px" }}>
+      <Pagination
+        onChange={handlePaginationChange}
+        currentPage={currentPageIndex}
+        totalPages={50}
+        onNext={handleNextPage}
+        onPrevious={handlePreviousPage}
+      />
+      ;
       <div className="page-wrapper" style={style.pageWrapper}>
         <Nav width="100%" position="fixed" style={{ top: "0", zIndex: "99" }} />
         <IngredientsList
