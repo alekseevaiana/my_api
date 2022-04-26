@@ -29,6 +29,7 @@ function App() {
   const [showUpdateCard, setShowUpdateCard] = useState(false);
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
   const [nextItemToken, setNextItemToken] = useState(null);
+  const [pageTokens, setPageTokens] = useState([]);
 
   useEffect(() => {
     const pullData = async () => {
@@ -41,9 +42,9 @@ function App() {
       const items = data.data.listIngredients.items;
       const nextToken = data.data.listIngredients.nextToken;
       const filtered = items.filter((item) => !item._deleted);
-      console.log("filtered data", filtered);
       setIngredients(filtered);
       setNextItemToken(nextToken);
+      setPageTokens([...pageTokens, nextToken]);
     };
     const getSubscription = (queryType) => {
       const subscription = API.graphql({
@@ -88,25 +89,75 @@ function App() {
 
   const handleNextPage = async () => {
     console.log("handleNextPage");
+    // when current page == last token index (page 1 page token len 1)
+    if (currentPageIndex === pageTokens.length) {
+      const data = await API.graphql({
+        query: listIngredients,
+        variables: {
+          limit: 20,
+          nextToken: nextItemToken,
+        },
+      });
+      const items = data.data.listIngredients.items;
+      const newToken = data.data.listIngredients.nextToken;
+      const filtered = items.filter((item) => !item._deleted);
+      console.log("filtered data", filtered);
+      setIngredients(filtered);
+      setNextItemToken(newToken);
+      setPageTokens([...pageTokens, nextItemToken]);
+    }
+
     setCurrentPageIndex(currentPageIndex + 1);
-    const data = await API.graphql({
-      query: listIngredients,
-      variables: {
-        limit: 20,
-        nextToken: nextItemToken,
-      },
-    });
-    const items = data.data.listIngredients.items;
-    const newToken = data.data.listIngredients.nextToken;
-    const filtered = items.filter((item) => !item._deleted);
-    console.log("filtered data", filtered);
-    setIngredients(filtered);
-    setNextItemToken(newToken);
-    console.log("new data", filtered);
   };
 
-  const handlePreviousPage = () => {
+  const handlePreviousPage = async () => {
+    // i am on page 3, prev page is 2. To get page 2 I need token nextToken from page1
     console.log("handlePreviousPage");
+    const desiredToken = pageTokens[currentPageIndex - 2];
+    console.log("desired token", pageTokens.indexOf(desiredToken));
+    console.log("current page", currentPageIndex);
+    if (currentPageIndex > 2) {
+      const data = await API.graphql({
+        query: listIngredients,
+        variables: {
+          limit: 20,
+          nextToken: desiredToken,
+        },
+      });
+      const items = data.data.listIngredients.items;
+      const newToken = data.data.listIngredients.nextToken;
+      const filtered = items.filter((item) => !item._deleted);
+      console.log("filtered data", filtered);
+      setIngredients(filtered);
+      setNextItemToken(newToken);
+      const currentToken = pageTokens[currentPageIndex - 1];
+      const newTokens = pageTokens.filter((token) => token !== currentToken);
+      console.log("newTokens array: ", newTokens);
+      // new tokens should contain
+      setPageTokens([...newTokens]);
+    }
+    if (currentPageIndex === 2) {
+      console.log("current page is 1");
+      const data = await API.graphql({
+        query: listIngredients,
+        variables: {
+          limit: 20,
+        },
+      });
+      const items = data.data.listIngredients.items;
+      const newToken = data.data.listIngredients.nextToken;
+      const filtered = items.filter((item) => !item._deleted);
+      console.log("filtered data", filtered);
+      setIngredients(filtered);
+      setNextItemToken(newToken);
+      // new tokens should contain but not current token? One token should be removed
+      //setPageTokens([...pageTokens, nextItemToken]);
+      const currentToken = pageTokens[currentPageIndex - 1];
+      const newTokens = pageTokens.filter((token) => token !== currentToken);
+      console.log("newTokens array: ", newTokens);
+      // new tokens should contain
+      setPageTokens([...newTokens]);
+    }
     setCurrentPageIndex(currentPageIndex - 1);
   };
 
@@ -145,7 +196,7 @@ function App() {
     });
     setShowUpdateCard(false);
   };
-
+  console.log("tokens: ", pageTokens);
   return (
     <div className="App" style={{ marginBottom: "85px", marginTop: "100px" }}>
       <Pagination
