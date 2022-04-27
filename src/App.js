@@ -22,6 +22,22 @@ import CreateIngredient from "./components/CreateIngredient";
 import UpdateIngredient from "./components/UpdateIngredient";
 import IngredientsList from "./components/IngredientsList";
 
+const fetchItems = async (token) => {
+  const data = await API.graphql({
+    query: listIngredients,
+    variables: {
+      limit: 20,
+      nextToken: token,
+    },
+  });
+  const items = data.data.listIngredients.items;
+  const newToken = data.data.listIngredients.nextToken;
+  const filtered = items.filter((item) => !item._deleted);
+  console.log("filtered in outside func", filtered);
+  console.log("new token in fetch items", newToken);
+  return { newToken, filtered };
+};
+
 function App() {
   const [ingredients, setIngredients] = useState([]);
   const [currentIngredient, setCurrentIngredient] = useState({});
@@ -30,6 +46,7 @@ function App() {
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
   const [nextItemToken, setNextItemToken] = useState(null);
   const [pageTokens, setPageTokens] = useState([]);
+  const [tokens, setTokens] = useState({});
 
   useEffect(() => {
     const pullData = async () => {
@@ -42,6 +59,20 @@ function App() {
       const items = data.data.listIngredients.items;
       const nextToken = data.data.listIngredients.nextToken;
       const filtered = items.filter((item) => !item._deleted);
+
+      const nextData = await API.graphql({
+        query: listIngredients,
+        variables: {
+          limit: 20,
+          nextToken: nextToken,
+        },
+      });
+      const nextNextToken = nextData.data.listIngredients.nextToken;
+
+      setTokens({
+        1: { nextToken, token: null },
+        2: { nextToken: nextNextToken, prevToken: null, token: nextToken },
+      });
       setIngredients(filtered);
       setNextItemToken(nextToken);
       setPageTokens([...pageTokens, nextToken]);
@@ -80,43 +111,58 @@ function App() {
     },
   };
 
-  const handlePaginationChange = (newPageIndex, prevPageIndex) => {
+  const handlePaginationChange = async (newPageIndex, prevPageIndex) => {
     console.log(
       `handleOnChange \n - newPageIndex: ${newPageIndex} \n - prevPageIndex: ${prevPageIndex}`
     );
-    setCurrentPageIndex(newPageIndex);
-  };
 
-  const handleNextPage = async () => {
-    console.log("handleNextPage");
-    // when current page == last token index (page 1 page token len 1)
-    if (currentPageIndex === pageTokens.length) {
-      const data = await API.graphql({
+    // if disired page less than data uploaded
+    // const { tkn, items } = await fetchItems(tokens[newPageIndex].token);
+    const data = await API.graphql({
+      query: listIngredients,
+      variables: {
+        limit: 20,
+        nextToken: tokens[newPageIndex].token,
+      },
+    });
+
+    const items = data.data.listIngredients.items;
+    const nextToken = data.data.listIngredients.nextToken;
+    setIngredients(items);
+    setCurrentPageIndex(newPageIndex);
+
+    const nextPage = newPageIndex + 1;
+    // if next next page not exists, create item for it
+    if (!tokens[nextPage]) {
+      // like 3
+      console.log("fetch one more page");
+      // fetch data from this page (3) using token from page 2
+      // const { nextNextToken, items } = await fetchItems(nextToken); // 2
+      const nextData = await API.graphql({
         query: listIngredients,
         variables: {
           limit: 20,
-          nextToken: nextItemToken,
+          nextToken: nextToken,
         },
       });
-      const items = data.data.listIngredients.items;
-      const newToken = data.data.listIngredients.nextToken;
-      const filtered = items.filter((item) => !item._deleted);
-      console.log("filtered data", filtered);
-      setIngredients(filtered);
-      setNextItemToken(newToken);
-      setPageTokens([...pageTokens, nextItemToken]);
+      const nextNextToken = nextData.data.listIngredients.nextToken;
+      const nexItem = {
+        ...tokens,
+        [currentPageIndex + 2]: {
+          prevToken: tokens[newPageIndex].token,
+          nextToken: nextNextToken,
+          token: nextToken,
+        },
+      };
+      console.log("next item: ", nexItem);
+      setTokens(nexItem);
     }
-
-    setCurrentPageIndex(currentPageIndex + 1);
   };
 
-  const handlePreviousPage = async () => {
-    // i am on page 3, prev page is 2. To get page 2 I need token nextToken from page1
-    console.log("handlePreviousPage");
-    const desiredToken = pageTokens[currentPageIndex - 2];
-    console.log("desired token", pageTokens.indexOf(desiredToken));
-    console.log("current page", currentPageIndex);
-    if (currentPageIndex > 2) {
+  const handleNextPage = async () => {
+    const desiredPageIndex = currentPageIndex + 1;
+    if (tokens[desiredPageIndex]) {
+      const desiredToken = tokens[desiredPageIndex].token;
       const data = await API.graphql({
         query: listIngredients,
         variables: {
@@ -124,39 +170,52 @@ function App() {
           nextToken: desiredToken,
         },
       });
-      const items = data.data.listIngredients.items;
-      const newToken = data.data.listIngredients.nextToken;
-      const filtered = items.filter((item) => !item._deleted);
-      console.log("filtered data", filtered);
+      const nextDesiredToken = data.data.listIngredients.nextToken;
+      const filtered = data.data.listIngredients.items;
+
+      setIngredients(filtered);
+      const nextPage = desiredPageIndex + 1;
+      if (!tokens[nextPage]) {
+        const nextData = await API.graphql({
+          query: listIngredients,
+          variables: {
+            limit: 20,
+            nextToken: nextDesiredToken,
+          },
+        });
+        const nextNextToken = nextData.data.listIngredients.nextToken;
+        const nexItem = {
+          ...tokens,
+          [currentPageIndex + 2]: {
+            prevToken: desiredToken,
+            nextToken: nextNextToken,
+            token: nextDesiredToken,
+          },
+        };
+        setTokens(nexItem);
+      }
+    }
+    setCurrentPageIndex(currentPageIndex + 1);
+  };
+
+  const handlePreviousPage = async () => {
+    // example: I am on page 3, prev page is 2. To get page 2 I need token nextToken from page1
+    const desiredToken = pageTokens[currentPageIndex - 2];
+    if (currentPageIndex > 2) {
+      const { newToken, filtered } = await fetchItems(desiredToken);
       setIngredients(filtered);
       setNextItemToken(newToken);
       const currentToken = pageTokens[currentPageIndex - 1];
       const newTokens = pageTokens.filter((token) => token !== currentToken);
-      console.log("newTokens array: ", newTokens);
-      // new tokens should contain
       setPageTokens([...newTokens]);
     }
     if (currentPageIndex === 2) {
-      console.log("current page is 1");
-      const data = await API.graphql({
-        query: listIngredients,
-        variables: {
-          limit: 20,
-        },
-      });
-      const items = data.data.listIngredients.items;
-      const newToken = data.data.listIngredients.nextToken;
-      const filtered = items.filter((item) => !item._deleted);
-      console.log("filtered data", filtered);
+      const { newToken, filtered } = await fetchItems(null);
       setIngredients(filtered);
       setNextItemToken(newToken);
-      // new tokens should contain but not current token? One token should be removed
-      //setPageTokens([...pageTokens, nextItemToken]);
       const currentToken = pageTokens[currentPageIndex - 1];
       const newTokens = pageTokens.filter((token) => token !== currentToken);
-      console.log("newTokens array: ", newTokens);
-      // new tokens should contain
-      setPageTokens([...newTokens]);
+      setPageTokens([...newTokens, newToken]);
     }
     setCurrentPageIndex(currentPageIndex - 1);
   };
@@ -196,13 +255,13 @@ function App() {
     });
     setShowUpdateCard(false);
   };
-  console.log("tokens: ", pageTokens);
+  console.log("tokens: ", tokens);
   return (
     <div className="App" style={{ marginBottom: "85px", marginTop: "100px" }}>
       <Pagination
         onChange={handlePaginationChange}
         currentPage={currentPageIndex}
-        totalPages={50}
+        totalPages={currentPageIndex + 1}
         onNext={handleNextPage}
         onPrevious={handlePreviousPage}
       />
