@@ -33,8 +33,6 @@ const fetchItems = async (token) => {
   const items = data.data.listIngredients.items;
   const newToken = data.data.listIngredients.nextToken;
   const filtered = items.filter((item) => !item._deleted);
-  console.log("filtered in outside func", filtered);
-  console.log("new token in fetch items", newToken);
   return { newToken, filtered };
 };
 
@@ -112,12 +110,6 @@ function App() {
   };
 
   const handlePaginationChange = async (newPageIndex, prevPageIndex) => {
-    console.log(
-      `handleOnChange \n - newPageIndex: ${newPageIndex} \n - prevPageIndex: ${prevPageIndex}`
-    );
-
-    // if disired page less than data uploaded
-    // const { tkn, items } = await fetchItems(tokens[newPageIndex].token);
     const data = await API.graphql({
       query: listIngredients,
       variables: {
@@ -132,12 +124,7 @@ function App() {
     setCurrentPageIndex(newPageIndex);
 
     const nextPage = newPageIndex + 1;
-    // if next next page not exists, create item for it
     if (!tokens[nextPage]) {
-      // like 3
-      console.log("fetch one more page");
-      // fetch data from this page (3) using token from page 2
-      // const { nextNextToken, items } = await fetchItems(nextToken); // 2
       const nextData = await API.graphql({
         query: listIngredients,
         variables: {
@@ -154,7 +141,6 @@ function App() {
           token: nextToken,
         },
       };
-      console.log("next item: ", nexItem);
       setTokens(nexItem);
     }
   };
@@ -199,24 +185,16 @@ function App() {
   };
 
   const handlePreviousPage = async () => {
-    // example: I am on page 3, prev page is 2. To get page 2 I need token nextToken from page1
-    const desiredToken = pageTokens[currentPageIndex - 2];
-    if (currentPageIndex > 2) {
-      const { newToken, filtered } = await fetchItems(desiredToken);
-      setIngredients(filtered);
-      setNextItemToken(newToken);
-      const currentToken = pageTokens[currentPageIndex - 1];
-      const newTokens = pageTokens.filter((token) => token !== currentToken);
-      setPageTokens([...newTokens]);
-    }
-    if (currentPageIndex === 2) {
-      const { newToken, filtered } = await fetchItems(null);
-      setIngredients(filtered);
-      setNextItemToken(newToken);
-      const currentToken = pageTokens[currentPageIndex - 1];
-      const newTokens = pageTokens.filter((token) => token !== currentToken);
-      setPageTokens([...newTokens, newToken]);
-    }
+    const data = await API.graphql({
+      query: listIngredients,
+      variables: {
+        limit: 20,
+        nextToken: tokens[currentPageIndex - 1].token,
+      },
+    });
+
+    const items = data.data.listIngredients.items;
+    setIngredients(items);
     setCurrentPageIndex(currentPageIndex - 1);
   };
 
@@ -255,7 +233,6 @@ function App() {
     });
     setShowUpdateCard(false);
   };
-  console.log("tokens: ", tokens);
   return (
     <div className="App" style={{ marginBottom: "85px", marginTop: "100px" }}>
       <Pagination
@@ -265,7 +242,7 @@ function App() {
         onNext={handleNextPage}
         onPrevious={handlePreviousPage}
       />
-      ;
+
       <div className="page-wrapper" style={style.pageWrapper}>
         <Nav width="100%" position="fixed" style={{ top: "0", zIndex: "99" }} />
         <IngredientsList
