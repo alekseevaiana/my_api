@@ -42,7 +42,6 @@ function App() {
   const [showAddCard, setShowAddCard] = useState(false);
   const [showUpdateCard, setShowUpdateCard] = useState(false);
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
-  // const [pageTokens, setPageTokens] = useState([]);
   const [tokens, setTokens] = useState({});
 
   useEffect(() => {
@@ -91,29 +90,15 @@ function App() {
   };
 
   const handlePaginationChange = async (newPageIndex, prevPageIndex) => {
-    const data = await API.graphql({
-      query: listIngredients,
-      variables: {
-        limit: 21,
-        nextToken: tokens[newPageIndex].token,
-      },
-    });
-
-    const items = data.data.listIngredients.items;
-    const nextToken = data.data.listIngredients.nextToken;
-    setIngredients(items);
+    const { nextToken, filtered } = await fetchItems(
+      tokens[newPageIndex].token
+    );
+    setIngredients(filtered);
     setCurrentPageIndex(newPageIndex);
 
     const nextPage = newPageIndex + 1;
     if (!tokens[nextPage]) {
-      const nextData = await API.graphql({
-        query: listIngredients,
-        variables: {
-          limit: 21,
-          nextToken: nextToken,
-        },
-      });
-      const nextNextToken = nextData.data.listIngredients.nextToken;
+      const { nextToken: nextNextToken } = await fetchItems(nextToken);
       const nexItem = {
         ...tokens,
         [currentPageIndex + 2]: {
@@ -130,28 +115,14 @@ function App() {
     const desiredPageIndex = currentPageIndex + 1;
     if (tokens[desiredPageIndex]) {
       const desiredToken = tokens[desiredPageIndex].token;
-      // const { nextDesiredToken, filtered } = await fetchItems(desiredToken); // not working :(
-      const data = await API.graphql({
-        query: listIngredients,
-        variables: {
-          limit: 21,
-          nextToken: desiredToken,
-        },
-      });
-      const nextDesiredToken = data.data.listIngredients.nextToken;
-      const filtered = data.data.listIngredients.items;
+      const { nextToken: nextDesiredToken, filtered } = await fetchItems(
+        desiredToken
+      );
 
       setIngredients(filtered);
       const nextPage = desiredPageIndex + 1;
       if (!tokens[nextPage]) {
-        const nextData = await API.graphql({
-          query: listIngredients,
-          variables: {
-            limit: 21,
-            nextToken: nextDesiredToken,
-          },
-        });
-        const nextNextToken = nextData.data.listIngredients.nextToken;
+        const { nextToken: nextNextToken } = await fetchItems(nextDesiredToken);
         const nexItem = {
           ...tokens,
           [currentPageIndex + 2]: {
@@ -167,16 +138,8 @@ function App() {
   };
 
   const handlePreviousPage = async () => {
-    const data = await API.graphql({
-      query: listIngredients,
-      variables: {
-        limit: 21,
-        nextToken: tokens[currentPageIndex - 1].token,
-      },
-    });
-
-    const items = data.data.listIngredients.items;
-    setIngredients(items);
+    const { filtered } = await fetchItems(tokens[currentPageIndex - 1].token);
+    setIngredients(filtered);
     setCurrentPageIndex(currentPageIndex - 1);
   };
 
