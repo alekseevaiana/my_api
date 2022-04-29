@@ -26,14 +26,14 @@ const fetchItems = async (token) => {
   const data = await API.graphql({
     query: listIngredients,
     variables: {
-      limit: 20,
+      limit: 21,
       nextToken: token,
     },
   });
   const items = data.data.listIngredients.items;
-  const newToken = data.data.listIngredients.nextToken;
+  const nextToken = data.data.listIngredients.nextToken;
   const filtered = items.filter((item) => !item._deleted);
-  return { newToken, filtered };
+  return { nextToken, filtered };
 };
 
 function App() {
@@ -42,38 +42,19 @@ function App() {
   const [showAddCard, setShowAddCard] = useState(false);
   const [showUpdateCard, setShowUpdateCard] = useState(false);
   const [currentPageIndex, setCurrentPageIndex] = useState(1);
-  const [nextItemToken, setNextItemToken] = useState(null);
-  const [pageTokens, setPageTokens] = useState([]);
+  // const [pageTokens, setPageTokens] = useState([]);
   const [tokens, setTokens] = useState({});
 
   useEffect(() => {
     const pullData = async () => {
-      const data = await API.graphql({
-        query: listIngredients,
-        variables: {
-          limit: 20,
-        },
-      });
-      const items = data.data.listIngredients.items;
-      const nextToken = data.data.listIngredients.nextToken;
-      const filtered = items.filter((item) => !item._deleted);
-
-      const nextData = await API.graphql({
-        query: listIngredients,
-        variables: {
-          limit: 20,
-          nextToken: nextToken,
-        },
-      });
-      const nextNextToken = nextData.data.listIngredients.nextToken;
+      const { nextToken, filtered } = await fetchItems(null);
+      const { nextToken: nextNextToken } = await fetchItems(nextToken);
 
       setTokens({
         1: { nextToken, token: null },
         2: { nextToken: nextNextToken, prevToken: null, token: nextToken },
       });
       setIngredients(filtered);
-      setNextItemToken(nextToken);
-      setPageTokens([...pageTokens, nextToken]);
     };
     const getSubscription = (queryType) => {
       const subscription = API.graphql({
@@ -113,7 +94,7 @@ function App() {
     const data = await API.graphql({
       query: listIngredients,
       variables: {
-        limit: 20,
+        limit: 21,
         nextToken: tokens[newPageIndex].token,
       },
     });
@@ -128,7 +109,7 @@ function App() {
       const nextData = await API.graphql({
         query: listIngredients,
         variables: {
-          limit: 20,
+          limit: 21,
           nextToken: nextToken,
         },
       });
@@ -149,10 +130,11 @@ function App() {
     const desiredPageIndex = currentPageIndex + 1;
     if (tokens[desiredPageIndex]) {
       const desiredToken = tokens[desiredPageIndex].token;
+      // const { nextDesiredToken, filtered } = await fetchItems(desiredToken); // not working :(
       const data = await API.graphql({
         query: listIngredients,
         variables: {
-          limit: 20,
+          limit: 21,
           nextToken: desiredToken,
         },
       });
@@ -165,7 +147,7 @@ function App() {
         const nextData = await API.graphql({
           query: listIngredients,
           variables: {
-            limit: 20,
+            limit: 21,
             nextToken: nextDesiredToken,
           },
         });
@@ -188,7 +170,7 @@ function App() {
     const data = await API.graphql({
       query: listIngredients,
       variables: {
-        limit: 20,
+        limit: 21,
         nextToken: tokens[currentPageIndex - 1].token,
       },
     });
@@ -256,7 +238,7 @@ function App() {
             position: "fixed",
             left: "50%",
             transform: "translate(-50%, 0)",
-            bottom: "20px",
+            bottom: "21px",
             boxShadow:
               "3px 4px 10px rgb(0 0 0 / 25%), -3px 4px 10px rgb(0 0 0 / 25%)",
           }}
