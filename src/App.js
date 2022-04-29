@@ -3,6 +3,7 @@ import "./App.css";
 import Nav from "./ui-components/Nav";
 import { useEffect, useState } from "react";
 import { Button } from "@aws-amplify/ui-react";
+import { Pagination, usePagination } from "@aws-amplify/ui-react";
 
 import { API } from "aws-amplify";
 import { listIngredients } from "./graphql/queries";
@@ -21,17 +22,37 @@ import CreateIngredient from "./components/CreateIngredient";
 import UpdateIngredient from "./components/UpdateIngredient";
 import IngredientsList from "./components/IngredientsList";
 
+const fetchItems = async (token) => {
+  const data = await API.graphql({
+    query: listIngredients,
+    variables: {
+      limit: 21,
+      nextToken: token,
+    },
+  });
+  const items = data.data.listIngredients.items;
+  const nextToken = data.data.listIngredients.nextToken;
+  const filtered = items.filter((item) => !item._deleted);
+  return { nextToken, filtered };
+};
+
 function App() {
   const [ingredients, setIngredients] = useState([]);
   const [currentIngredient, setCurrentIngredient] = useState({});
   const [showAddCard, setShowAddCard] = useState(false);
   const [showUpdateCard, setShowUpdateCard] = useState(false);
+  const [currentPageIndex, setCurrentPageIndex] = useState(1);
+  const [tokens, setTokens] = useState({});
 
   useEffect(() => {
     const pullData = async () => {
-      const data = await API.graphql({ query: listIngredients });
-      const items = data.data.listIngredients.items;
-      const filtered = items.filter((item) => !item._deleted);
+      const { nextToken, filtered } = await fetchItems(null);
+      const { nextToken: nextNextToken } = await fetchItems(nextToken);
+
+      setTokens({
+        1: { nextToken, token: null },
+        2: { nextToken: nextNextToken, prevToken: null, token: nextToken },
+      });
       setIngredients(filtered);
     };
     const getSubscription = (queryType) => {
@@ -66,6 +87,60 @@ function App() {
     showUpdateCard: {
       display: showUpdateCard ? "block" : "none",
     },
+  };
+
+  const handlePaginationChange = async (newPageIndex, prevPageIndex) => {
+    const { nextToken, filtered } = await fetchItems(
+      tokens[newPageIndex].token
+    );
+    setIngredients(filtered);
+    setCurrentPageIndex(newPageIndex);
+
+    const nextPage = newPageIndex + 1;
+    if (!tokens[nextPage]) {
+      const { nextToken: nextNextToken } = await fetchItems(nextToken);
+      const nexItem = {
+        ...tokens,
+        [currentPageIndex + 2]: {
+          prevToken: tokens[newPageIndex].token,
+          nextToken: nextNextToken,
+          token: nextToken,
+        },
+      };
+      setTokens(nexItem);
+    }
+  };
+
+  const handleNextPage = async () => {
+    const desiredPageIndex = currentPageIndex + 1;
+    if (tokens[desiredPageIndex]) {
+      const desiredToken = tokens[desiredPageIndex].token;
+      const { nextToken: nextDesiredToken, filtered } = await fetchItems(
+        desiredToken
+      );
+
+      setIngredients(filtered);
+      const nextPage = desiredPageIndex + 1;
+      if (!tokens[nextPage]) {
+        const { nextToken: nextNextToken } = await fetchItems(nextDesiredToken);
+        const nexItem = {
+          ...tokens,
+          [currentPageIndex + 2]: {
+            prevToken: desiredToken,
+            nextToken: nextNextToken,
+            token: nextDesiredToken,
+          },
+        };
+        setTokens(nexItem);
+      }
+    }
+    setCurrentPageIndex(currentPageIndex + 1);
+  };
+
+  const handlePreviousPage = async () => {
+    const { filtered } = await fetchItems(tokens[currentPageIndex - 1].token);
+    setIngredients(filtered);
+    setCurrentPageIndex(currentPageIndex - 1);
   };
 
   const handleIngredientCreate = async (data) => {
@@ -103,9 +178,16 @@ function App() {
     });
     setShowUpdateCard(false);
   };
-
   return (
     <div className="App" style={{ marginBottom: "85px", marginTop: "100px" }}>
+      <Pagination
+        onChange={handlePaginationChange}
+        currentPage={currentPageIndex}
+        totalPages={currentPageIndex + 1}
+        onNext={handleNextPage}
+        onPrevious={handlePreviousPage}
+      />
+
       <div className="page-wrapper" style={style.pageWrapper}>
         <Nav width="100%" position="fixed" style={{ top: "0", zIndex: "99" }} />
         <IngredientsList
@@ -119,7 +201,7 @@ function App() {
             position: "fixed",
             left: "50%",
             transform: "translate(-50%, 0)",
-            bottom: "20px",
+            bottom: "21px",
             boxShadow:
               "3px 4px 10px rgb(0 0 0 / 25%), -3px 4px 10px rgb(0 0 0 / 25%)",
           }}
