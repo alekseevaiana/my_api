@@ -27,6 +27,14 @@ export default function IngredientsList({ onIconClick, ingredients }) {
                 overrides={{
                   Ingredient: {
                     children: item.name,
+
+                    style: {
+                      textOverflow: "ellipsis",
+                      maxWidth: "100px",
+                      overflow: "hidden",
+                    },
+                    display: "block",
+                    whiteSpace: "nowrap",
                   },
                   Type: {
                     children: item.type,
