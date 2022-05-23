@@ -39,13 +39,17 @@ After change:
 
 `npm start`
 
+## Usage
+
+- Go to https://master.d1e77a5mh3gbbs.amplifyapp.com/
+- Sign up (or sign in if you already have an account)
+- Add some ingredients!
+
 ## Preview screenshots
 
 ### Pagination
 
-
 https://user-images.githubusercontent.com/36742189/169890999-beafa0a4-c379-4c6d-9784-4ec6ff2f7a07.mov
-
 
 ### Main screen
 
@@ -59,3 +63,9 @@ https://user-images.githubusercontent.com/36742189/169890999-beafa0a4-c379-4c6d-
 The Core Team
 Made at Qwasar Silicon Valley
 
+TODO - How to install your project? npm install? make? make re?
+
+### The Core Team
+
+<span><i>Made at <a href='https://qwasar.io'>Qwasar Silicon Valley</a></i></span>
+<span><img alt='Qwasar Silicon Valley Logo' src='https://storage.googleapis.com/qwasar-public/qwasar-logo_50x50.png' width='20px'></span>
