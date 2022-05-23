@@ -41,6 +41,12 @@ After change:
 
 ## Preview screenshots
 
+### Pagination
+
+
+https://user-images.githubusercontent.com/36742189/169890999-beafa0a4-c379-4c6d-9784-4ec6ff2f7a07.mov
+
+
 ### Main screen
 
 <!-- ![Create item screen](src/images/my_api_create.png) -->
@@ -52,3 +58,4 @@ After change:
 
 The Core Team
 Made at Qwasar Silicon Valley
+
